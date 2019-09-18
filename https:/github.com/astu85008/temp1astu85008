@@ -1,0 +1,197 @@
+Homework 1
+2019-09-16
+Load packages and file
+install.packages("knitr")
+
+library(knitr)
+Read in the Data
+#Question1
+min1<-c()
+max1<-c()
+mean1<-c()
+median1<-c()
+sd1<-c()
+for (i in 2:ncol(utilities)){
+  max1<-c(max1,max(utilities[,i]))
+  min1<-c(min1,min(utilities[,i]))
+  mean1<-c(mean1,mean(utilities[,i]))
+  median1<-c(median1,median(utilities[,i]))
+  sd1<-c(sd1,sd(utilities[,i]))
+  }
+
+utilities_summary<-round(matrix(c(max1, min1, mean1, median1, sd1), nrow= 5, ncol =  8, byrow = TRUE), 2)
+rownames(utilities_summary)<-c("max","min","mean","median","standard deviation")
+colnames(utilities_summary)<-colnames(utilities[,2:9])
+as.data.frame(utilities_summary)
+ 
+ 
+Fixed_charge
+<dbl>
+RoR
+<dbl>
+Cost
+<dbl>
+Load_factor
+<dbl>
+Demand_growth
+<dbl>
+Sales
+<dbl>
+max	1.49	15.40	252.00	67.60	9.20	17441.00	
+min	0.75	6.40	96.00	49.80	-2.20	3300.00	
+mean	1.11	10.74	168.18	56.98	3.24	8914.05	
+median	1.11	11.05	170.50	56.35	3.00	8024.00	
+standard deviation	0.18	2.24	41.19	4.46	3.12	3549.98	
+5 rows | 1-7 of 8 columns
+NA
+Compute the minimum, maximum, mean, median, and standard deviation for each of the numeric variables using data.table package. Which variable(s) has the largest variability? Explain your answer.
+-If we compare the difference between the mean and median values,we can guess the distribution of our data. Ex. In fixed_charge Mean and Median is the same. So,we can guess the data of fixed_charge is close to normal distribution. Ex: In Sales Mean is 10% larger than Median so we can say its right skewed
+
+-Nuclear has the largest variability.It has the maximum standard deviation and S.D. is the root of variance and also,variance is directly proportional to variability.
+
+#Question2
+temp1<-as.data.table(gather(utilities, "key", "value", -Company))
+ggplot(temp1 ,aes(x = key, y = value)) + 
+  geom_boxplot()+
+  xlab("type")+
+  ylab("value")
+
+
+
+ggplot(utilities) + 
+  geom_boxplot(aes(x = colnames(utilities[, 2]), y = utilities[, 2]))+
+  xlab(colnames(utilities[,2]))+
+  ylab("value")
+
+
+ggplot(utilities) +
+  geom_boxplot(aes(x = colnames(utilities[, 3]), y = utilities[, 3]))+
+  xlab(colnames(utilities[,3]))+
+  ylab("value")
+
+
+ggplot(utilities) +
+  geom_boxplot(aes(x = colnames(utilities[, 4]), y = utilities[, 4]))+
+  xlab(colnames(utilities[,4]))+
+  ylab("value")
+
+
+ggplot(utilities) +
+  geom_boxplot(aes(x = colnames(utilities[, 5]), y = utilities[, 5]))+
+  xlab(colnames(utilities[,5]))+
+  ylab("value")
+
+
+ggplot(utilities) +
+  geom_boxplot(aes(x = colnames(utilities[, 6]), y = utilities[, 6]))+
+  xlab(colnames(utilities[,6]))+
+  ylab("value")
+
+
+ggplot(utilities) +
+  geom_boxplot(aes(x = colnames(utilities[, 7]), y = utilities[, 7]))+
+  xlab(colnames(utilities[,7]))+
+  ylab("value")
+
+
+ggplot(utilities) +
+  geom_boxplot(aes(x = colnames(utilities[, 8]), y = utilities[, 8]))+
+  xlab(colnames(utilities[,8]))+
+  ylab("value")
+
+
+ggplot(utilities) +
+  geom_boxplot(aes(x = colnames(utilities[, 9]), y = utilities[, 9]))+
+  xlab(colnames(utilities[,9]))+
+  ylab("value")
+
+
+NA
+NA
+Create boxplots for each of the numeric variables. Are there any extreme values for any of the variables? Which ones? Explain your answer
+-Yes there are extreme values for 2 variables.They are Fixed_charge and Sales. Incase of Fixed_charge,their wont be much difference in mean and median values because there are outliers on both sides. Incase of Sales,their is a wide difference in the mean and median values is considerate because the outliers is only upwards.
+
+#question3
+
+cor.mat <- round(cor(utilities[,-1]),2) # rounded correlation matrix 
+melted.cor.mat <- melt(cor.mat) 
+ggplot(melted.cor.mat, aes(x = X1, y = X2, fill = value)) + 
+  scale_fill_gradient(low="wheat", high="orangered") +
+  geom_tile() + 
+  geom_text(aes(x = X1, y = X2, label = value)) +
+  ggtitle("Which Variables Are Highly Correlated?")
+
+
+NA
+NA
+Create a heatmap for the numeric variables. Discuss any interesting trend you see in this chart. Ans:
+0.64 :If the fixed_charge value increases the rate of return increases.They are positively correlated. -0.56: As the fuel_cost increases the sales value drops down.They are negatively correlated.
+
+Sometimes correlation doesn’t mean the causation, so we need to careful about how to interpret the results.
+
+#question4
+install.packages("pacman")
+Error in install.packages : Updating loaded packages
+library(pacman)
+
+pca_1<-prcomp(na.omit(utilities[,-1]))
+summary(pca_1)
+Importance of components:
+                             PC1      PC2      PC3   PC4   PC5   PC6    PC7    PC8
+Standard deviation     3549.9901 41.26913 15.49215 4.001 2.783 1.977 0.3501 0.1224
+Proportion of Variance    0.9998  0.00014  0.00002 0.000 0.000 0.000 0.0000 0.0000
+Cumulative Proportion     0.9998  0.99998  1.00000 1.000 1.000 1.000 1.0000 1.0000
+pca_1$rotation
+                        PC1           PC2           PC3           PC4           PC5           PC6
+Fixed_charge   7.883140e-06 -0.0004460932  0.0001146357 -0.0057978329  0.0198566131 -0.0583722527
+RoR            6.081397e-06 -0.0186257078  0.0412535878  0.0292444838  0.2028309717 -0.9735822744
+Cost          -3.247724e-04  0.9974928360 -0.0566502956 -0.0179103135  0.0355836487 -0.0144563569
+Load_factor    3.618357e-04  0.0111104272 -0.0964680806  0.9930009368  0.0495177973  0.0333700701
+Demand_growth -1.549616e-04  0.0326730808 -0.0038575008  0.0544730799 -0.9768581322 -0.2038187556
+Sales         -9.999983e-01 -0.0002209801  0.0017377455  0.0005270008  0.0001471164  0.0001237088
+Nuclear        1.767632e-03  0.0589056695  0.9927317841  0.0949073699 -0.0057261758  0.0430954352
+Fuel_Cost      8.780470e-05  0.0001659524 -0.0157634569  0.0276496391 -0.0215054038  0.0633116915
+                        PC7           PC8
+Fixed_charge  -1.002990e-01  9.930280e-01
+RoR           -5.984233e-02 -6.717166e-02
+Cost          -9.986723e-04 -1.312104e-03
+Load_factor    2.930752e-02  9.745357e-03
+Demand_growth  8.898790e-03  8.784363e-03
+Sales         -9.721241e-05  5.226863e-06
+Nuclear       -1.043775e-02  2.059461e-03
+Fuel_Cost     -9.926283e-01 -9.594372e-02
+Run principal component analysis using unscaled numeric variables in the dataset.How do you interpret the results from this model?
+-PC1 has 99.98% of the total variance and PC2 has 0.014% of total variance. According to 90% criteria situation, we just need to tale PC1 to analyze the variation. Take a look of PC1’s composition, Sales account for a large proportion 0.9999, which is weight more large than others. We can know this model may not good enough to analyze because of unscaling.
+
+
+#question5
+
+pca_2 <- prcomp(na.omit(utilities[,-1]), scale. = T)
+summary(pca_2)
+Importance of components:
+                          PC1    PC2    PC3    PC4     PC5     PC6     PC7     PC8
+Standard deviation     1.4741 1.3785 1.1504 0.9984 0.80562 0.75608 0.46530 0.41157
+Proportion of Variance 0.2716 0.2375 0.1654 0.1246 0.08113 0.07146 0.02706 0.02117
+Cumulative Proportion  0.2716 0.5091 0.6746 0.7992 0.88031 0.95176 0.97883 1.00000
+pca_2$rotation
+                      PC1         PC2         PC3         PC4        PC5         PC6         PC7
+Fixed_charge   0.44554526 -0.23217669  0.06712849 -0.55549758  0.4008403 -0.00654016  0.20578234
+RoR            0.57119021 -0.10053490  0.07123367 -0.33209594 -0.3359424 -0.13326000 -0.15026737
+Cost          -0.34869054  0.16130192  0.46733094 -0.40908380  0.2685680  0.53750238 -0.11762875
+Load_factor   -0.28890116 -0.40918419 -0.14259793 -0.33373941 -0.6800711  0.29890373  0.06429342
+Demand_growth -0.35536100  0.28293270  0.28146360 -0.39139699 -0.1626375 -0.71916993 -0.05155339
+Sales          0.05383343  0.60309487 -0.33199086 -0.19086550 -0.1319721  0.14953365  0.66050223
+Nuclear        0.16797023 -0.08536118  0.73768406  0.33348714 -0.2496462  0.02644086  0.48879175
+Fuel_Cost     -0.33584032 -0.53988503 -0.13442354 -0.03960132  0.2926660 -0.25235278  0.48914707
+                      PC8
+Fixed_charge  -0.48107955
+RoR            0.62855128
+Cost           0.30294347
+Load_factor   -0.24781930
+Demand_growth -0.12223012
+Sales          0.10339649
+Nuclear       -0.08466572
+Fuel_Cost      0.43300956
+Next, run principal component model after scaling the numeric variables. Did the results/interpretations change? How so? Explain your answers.
+After we scale the model, the Proportion of Variance of PC1, PC2…..PC8 chage a lot. According to 90% criteria situation, we need consider PC1 to PC6 to analyze. Scaling make the variable more compatible and comparable, which is better than Question 4 Model. In Question model, PC1 account the large proportion because the number of sales is super larger than other. Thus, Question 4 Model is not very suitable to analyze.
+
